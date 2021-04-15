@@ -2,9 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/leonklingele/tldcheck"
+	"github.com/logrusorgru/aurora/v3"
 )
 
 func run() error {
@@ -17,12 +21,25 @@ func run() error {
 		os.Exit(1)
 	}
 
-	tlds, err := tlds()
+	tlds, err := tldcheck.AllTLDs()
 	if err != nil {
-		return err
+		return fmt.Errorf("%w", err)
 	}
 
-	return check(*dn, tlds, *workers)
+	c, err := tldcheck.Check(*dn, tlds, *workers)
+	if err != nil {
+		return fmt.Errorf("%w", err)
+	}
+
+	for res := range c {
+		val := aurora.Red("not available")
+		if res.Available {
+			val = aurora.Green("available")
+		}
+		fmt.Printf("%s: %s\n", val, res.Domain.String()) //nolint: forbidigo
+	}
+
+	return nil
 }
 
 func main() {

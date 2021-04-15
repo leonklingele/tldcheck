@@ -1,4 +1,4 @@
-TLDS_FILE := ./cmd/tldcheck/tlds-alpha-by-domain.txt
+TLDS_FILE := ./tlds-alpha-by-domain.txt
 
 .PHONY: all
 all: build
