@@ -12,12 +12,12 @@ import (
 )
 
 func run() error {
-	dn := flag.String("name", "", "domain name to check for")
+	dn := flag.String("name", "", "domain name to check for (required)")
 	workers := flag.Int("workers", runtime.NumCPU(), "number of concurrent workers")
 	flag.Parse()
 
 	if len(*dn) == 0 {
-		log.Println("no domain name given")
+		flag.Usage()
 		os.Exit(1)
 	}
 
