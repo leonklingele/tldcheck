@@ -1,13 +1,14 @@
 package main
 
 import (
-	"flag"
+	"flag" //nolint:depguard // We only allow to import the flag package in here
 	"fmt"
-	"log"
+	"log" //nolint:depguard // TODO: Switch to log/slog
 	"os"
 	"runtime"
 
 	"github.com/leonklingele/tldcheck"
+
 	"github.com/logrusorgru/aurora/v3"
 )
 
@@ -16,9 +17,9 @@ func run() error {
 	workers := flag.Int("workers", runtime.NumCPU(), "number of concurrent workers")
 	flag.Parse()
 
-	if len(*dn) == 0 {
+	if *dn == "" {
 		flag.Usage()
-		os.Exit(1)
+		os.Exit(1) //nolint:revive // Fine to do in the main package
 	}
 
 	tlds, err := tldcheck.AllTLDs()
@@ -36,7 +37,9 @@ func run() error {
 		if res.Available {
 			val = aurora.Green("available")
 		}
-		fmt.Printf("%s: %s\n", val, res.Domain.String()) //nolint: forbidigo
+
+		//nolint:errcheck,forbidigo // We explicitly want to print to stdout
+		_, _ = fmt.Printf("%s: %s\n", val, res.Domain.String())
 	}
 
 	return nil

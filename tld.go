@@ -1,15 +1,16 @@
 package tldcheck
 
 import (
-	_ "embed"
 	"fmt"
 	"strings"
 
 	"golang.org/x/net/idna"
+
+	_ "embed"
 )
 
 //go:embed tlds-alpha-by-domain.txt
-var rawTLDList string //nolint: gochecknoglobals
+var rawTLDList string
 
 type TLD struct {
 	TLD    string
@@ -21,12 +22,12 @@ func AllTLDs() ([]TLD, error) {
 	tlds := make([]TLD, 0, len(rawTLDs))
 
 	for _, tldRaw := range rawTLDs {
-		if len(tldRaw) == 0 || strings.HasPrefix(tldRaw, "#") {
+		if tldRaw == "" || strings.HasPrefix(tldRaw, "#") {
 			continue
 		}
 
 		tldRaw = strings.ToLower(tldRaw)
-		tld := tldRaw
+		tld := tldRaw //nolint:copyloopvar // False positive as used as a reference to the previous version
 
 		if strings.HasPrefix(tldRaw, "xn--") {
 			// Punycode TLD
