@@ -21,5 +21,5 @@ func (d Domain) String() string {
 	if d.TLD.TLD != d.TLD.TLDRaw {
 		return fmt.Sprintf("%s (%s)", d.Domain(), d.DomainRaw())
 	}
-	return d.Domain() //nolint: nlreturn
+	return d.Domain()
 }

@@ -1,9 +1,11 @@
 # Fast TLD checker
 
+![build](https://github.com/leonklingele/tldcheck/actions/workflows/build.yml/badge.svg)
+
 ## Installation
 
 ```sh
-go get -u github.com/leonklingele/tldcheck/...
+go install github.com/leonklingele/tldcheck/cmd/tldcheck@latest
 tldcheck -help
 ```
 

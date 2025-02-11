@@ -1,14 +1,13 @@
 package tldcheck
 
 import (
-	"log"
+	"log" //nolint:depguard // TODO: Switch to log/slog
 	"sync"
 
 	"github.com/miekg/dns"
 )
 
 func Check(sld string, tlds []TLD, workers int) (ResultChan, error) {
-	//nolint: exhaustivestruct
 	config := &dns.ClientConfig{
 		Servers:  DNSServers,
 		Port:     DNSPort,
@@ -20,7 +19,7 @@ func Check(sld string, tlds []TLD, workers int) (ResultChan, error) {
 	wch := make(chan workItem)
 	rch := make(chan Result)
 
-	for i := 0; i < workers; i++ {
+	for range workers {
 		c, err := newChecker(config)
 		if err != nil {
 			return nil, err
@@ -36,10 +35,10 @@ func Check(sld string, tlds []TLD, workers int) (ResultChan, error) {
 					if err != nil {
 						if wi.attempts <= 0 {
 							log.Printf("failed to check item %s: %v\n", wi.String(), err)
-							break //nolint: nlreturn
+							break
 						}
 						wi.attempts--
-						continue //nolint: nlreturn
+						continue
 					}
 					rch <- *res
 

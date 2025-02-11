@@ -2,32 +2,28 @@ package tldcheck
 
 import (
 	"fmt"
-	"math/rand"
+	rand "math/rand/v2"
 	"time"
 
 	"github.com/miekg/dns"
 )
 
+//nolint:gochecknoglobals // Nice to have as a global
 var (
-	//nolint: gochecknoglobals
 	DNSServers = []string{
 		"1.1.1.1",
 		"8.8.4.4",
 		"8.8.8.8",
 		"9.9.9.9",
 	}
-	//nolint: gochecknoglobals
 	DNSPort = "53"
 
-	//nolint: gochecknoglobals
-	DNSTimeout = 8 * time.Second
-	//nolint: gochecknoglobals
+	DNSTimeout  = 8 * time.Second
 	DNSAttempts = 8
 )
 
 type checker struct {
 	client *dns.Client
-	config *dns.ClientConfig
 	conn   *dns.Conn
 	msg    *dns.Msg
 }
@@ -39,7 +35,7 @@ func (c *checker) dnsQuery(domain string) (*dns.Msg, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to query %s: %w", domain, err)
 	}
-	return r, nil //nolint: nlreturn
+	return r, nil
 }
 
 func (c *checker) Check(wi workItem) (*Result, error) {
@@ -60,31 +56,22 @@ func (c *checker) Check(wi workItem) (*Result, error) {
 }
 
 func newChecker(c *dns.ClientConfig) (*checker, error) {
-	//nolint: exhaustivestruct
 	client := &dns.Client{
 		Timeout: DNSTimeout,
 	}
-	server := c.Servers[rand.Intn(len(c.Servers))] //nolint: gosec
+	i := rand.IntN(len(c.Servers)) //nolint:gosec // Must not be a crypto-rand index
+	server := c.Servers[i]
 	port := c.Port
 	socket := fmt.Sprintf("%s:%s", server, port)
 	conn, err := client.Dial(socket)
 	if err != nil {
 		return nil, fmt.Errorf("failed to dial %s: %w", socket, err)
 	}
-	//nolint: exhaustivestruct
 	msg := &dns.Msg{}
-
-	// log.Printf("initialized worker using DNS server %s/udp\n", socket)
 
 	return &checker{
 		client: client,
-		config: c,
 		conn:   conn,
 		msg:    msg,
 	}, nil
-}
-
-//nolint: gochecknoinits
-func init() {
-	rand.Seed(time.Now().UnixNano())
 }
