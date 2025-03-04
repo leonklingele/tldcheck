@@ -5,7 +5,7 @@ go 1.23.6
 require (
 	github.com/logrusorgru/aurora/v3 v3.0.0
 	github.com/miekg/dns v1.1.63
-	golang.org/x/net v0.35.0
+	golang.org/x/net v0.36.0
 )
 
 require (
