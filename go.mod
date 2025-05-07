@@ -4,7 +4,7 @@ go 1.24.2
 
 require (
 	github.com/logrusorgru/aurora/v3 v3.0.0
-	github.com/miekg/dns v1.1.65
+	github.com/miekg/dns v1.1.66
 	golang.org/x/net v0.40.0
 )
 
